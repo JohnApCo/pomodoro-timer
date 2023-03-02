@@ -1,38 +1,364 @@
-.App {
-  text-align: center;
+/* ******************** Fluid Reset ******************** */
+/* @link https://utopia.fyi/type/calculator?c=320,17,1.125,1920,20,1.333,6,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l */
+
+:root {
+  --step--2: clamp(0.78rem, calc(0.79rem + -0.01vw), 0.79rem);
+  --step--1: clamp(0.89rem, calc(0.88rem + 0.06vw), 0.94rem);
+  --step-0: clamp(1rem, calc(0.97rem + 0.16vw), 1.13rem);
+  --step-1: clamp(1.13rem, calc(1.07rem + 0.29vw), 1.35rem);
+  --step-2: clamp(1.27rem, calc(1.18rem + 0.45vw), 1.62rem);
+  --step-3: clamp(1.42rem, calc(1.29rem + 0.66vw), 1.94rem);
+  --step-4: clamp(1.6rem, calc(1.42rem + 0.93vw), 2.33rem);
+  --step-5: clamp(1.8rem, calc(1.55rem + 1.27vw), 2.8rem);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+/* ******************** Custom Properties ******************** */
+:root {
+  --font-text-600: "Montserrat", sans-serif;
+  --font-text-400: "Hind", sans-serif;
+  --font-text-timer: "Open Sans", sans-serif;
 
+  --container-xsm: 400px;
+  --container-sm: 620px;
+  --container-md: 992px;
+  --container-lg: 1200px;
+
+  --bg-color: rgb(57, 112, 151);
+  --text-color: white;
+
+  --text-color-secondary: rgb(102, 102, 102); /* #2e2e2eff; */
+}
+/* ******************** Reset CSS ******************** */
+html {
+  box-sizing: border-box;
+}
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+  html {
+    scroll-behavior: smooth;
   }
 }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-.App-header {
-  background-color: #282c34;
+body {
+  margin: 0;
+  width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  font-family: var(--font-text-400);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+/* ******************** Headings *********************/
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-text-600);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0.5em 0;
+}
+h1,
+.step-5 {
+  font-size: var(--step-5);
+}
+h2,
+.step-4 {
+  font-size: var(--step-4);
+}
+h3,
+.step-3 {
+  font-size: var(--step-3);
+}
+
+.container-lg,
+.container-md,
+.container-sm {
+  padding-right: var(--step-1);
+  padding-left: var(--step-1);
+  margin-right: auto;
+  margin-left: auto;
+  width: var(--container-sm);
+  max-width: 95%;
+}
+.container-md {
+  width: var(--container-md);
+}
+.container-lg {
+  width: var(--container-lg);
+}
+
+.container--header {
+  height: 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container--clock-bar {
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/********************* Header ****************/
+.header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+}
+
+.bar {
+  height: 3px;
+  background-color: white;
+  border-radius: 100px;
+  transform: translateY(-1px);
+  width: 0%;
+}
+
+.logo {
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: var(--step-1);
+}
+.icon {
+  margin-right: 0.5rem;
+}
+.logo__img {
+  padding: 0.25rem;
+  width: auto;
+  height: 3.5rem;
+}
+
+.section {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+.container--timer {
+  text-align: center;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  max-width: 480px;
+  margin: auto;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.timer {
+  font-size: 8rem;
+  font-weight: 700;
+}
+
+.time-counter {
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+  font-size: 1.2rem;
+  opacity: 0.6;
+  margin-bottom: 4px;
+}
+
+.message {
+  font-size: 1.5rem;
+  overflow-wrap: break-word;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.row--settings {
+  gap: 1.5rem;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+/********************* Button ****************/
+.button {
+  display: inline-block;
+  text-align: center;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  opacity: 0.9;
+  background-image: none;
+  background-color: transparent;
+  box-shadow: none;
+  /* font-size: 1rem; */
+  padding: 0.5rem 0.75rem;
+  min-width: 4rem;
+  border: none;
+  color: var(--text-color);
+}
+
+.button--header {
+  background: none rgba(255, 255, 255, 0.2);
+  margin-left: 0.5rem;
+}
+
+.button--active {
+  background-color: rgba(0, 0, 0, 0.2);
+  font-weight: 700;
+}
+
+.button__input {
+  /* appearance: none; */
+}
+
+.button__icon {
+  margin-right: 0.5rem;
+}
+.button__text--timer {
+  font-size: 1rem;
+}
+
+.button--big {
+  font-size: 1.5rem;
+  background-color: var(--text-color);
+  color: var(--bg-color);
+  font-weight: 700;
+  padding: 1rem;
+  width: 12rem;
+  box-shadow: rgb(235 235 235) 0px 6px 0px;
+}
+
+.timer {
+  line-height: 1.4;
+  letter-spacing: 0.3rem;
+  font-family: var(--font-text-timer);
+}
+/********************* Modal Setting *********************/
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+}
+
+.modal.show {
+  opacity: 1;
+  pointer-events: visible;
+}
+
+.modal__content {
+  width: var(--container-xsm);
+  background-color: white;
+  color: var(--text-color-secondary);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.button--secondary {
+  background-color: var(--text-color-secondary);
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.modal__footer {
+  text-align: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.timer-item {
+  width: 33.33%;
+}
+
+.timer-item__label {
+  color: rgb(187, 187, 187);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.setting__label {
+  font-weight: 600;
+}
+
+.setting__input {
+  border-radius: 0.25rem;
+  background-color: rgb(239, 239, 239);
+  font-size: 1rem;
+  padding: 0.6rem;
+  box-shadow: none;
+  border: none;
+  color: rgb(85, 85, 85);
+  width: 100%;
+}
+
+.setting__input:focus {
+  outline: none;
+}
+
+.setting__input--sm {
+  width: 70px;
+}
+
+/***************** Toggle ****************/
+
+.toggle__checkbox {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+
+.toggle__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  width: 4rem;
+  height: 2rem;
+  background: grey;
+  border-radius: 100px;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.toggle__label .toggle__button {
+  content: "";
+  position: absolute;
+  top: 0.1rem;
+  left: 0.1rem;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 1.8rem;
+  transition: 0.2s;
+  background: #fff;
+  box-shadow: 0 0 2px 0 rgba(10, 10, 10, 0.29);
+}
+
+.toggle__checkbox:checked + .toggle__label .toggle__button {
+  left: calc(100% - 2px);
+  transform: translateX(-100%);
+}
+
+.toggle__label:active .toggle__button {
+  width: 60px;
 }
