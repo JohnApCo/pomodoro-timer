@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import useSettings from "../hooks/useSettings";
 
 const secondsToHHMMSS = (seconds) => {
@@ -9,29 +9,21 @@ const secondsToHHMMSS = (seconds) => {
 };
 
 const PomodoroTimer = () => {
-  const { pomodoroTime, shortBreakTime, longBreakTime } = useSettings();
+  const {
+    pomodoroTime,
+    shortBreakTime,
+    longBreakTime,
+    longBreakInterval,
+    shots,
+    onResetShots,
+    onChangeShots,
+  } = useSettings();
 
   const [countdown, setCountdown] = useState(pomodoroTime * 60);
-  const [shots, setShots] = useState(0);
+  /*  const [shots, setShots] = useState(0); */
   const [isRunning, setIsRunning] = useState(false);
   const [currentTimer, setCurrentTimer] = useState("pomodoro");
 
-  const timerRef = useRef();
-
-  function start() {
-    setIsRunning(true);
-    console.log("start");
-    clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setCountdown((prev) => prev - 1);
-    }, 1000);
-  }
-
-  function pause() {
-    setIsRunning(false);
-    console.log("pause");
-    clearInterval(timerRef.current);
-  }
   const pomodoroActive = () => {
     if (
       isRunning &&
@@ -43,7 +35,7 @@ const PomodoroTimer = () => {
     }
     setCurrentTimer("pomodoro");
     setCountdown(pomodoroTime * 60);
-    pause();
+    setIsRunning(false);
   };
 
   const shortActive = () => {
@@ -57,7 +49,7 @@ const PomodoroTimer = () => {
     }
     setCurrentTimer("short");
     setCountdown(shortBreakTime * 60);
-    pause();
+    setIsRunning(false);
   };
 
   const longActive = () => {
@@ -71,23 +63,43 @@ const PomodoroTimer = () => {
     }
     setCurrentTimer("long");
     setCountdown(longBreakTime * 60);
-    pause();
+    setIsRunning(false);
   };
 
   useEffect(() => {
-    if (countdown === 0) {
-      setShots((prev) => prev + 1);
-      setCountdown(pomodoroTime);
-      if (currentTimer === "pomodoro") shortActive();
-      if (currentTimer === "short") pomodoroActive();
+    let interval;
+    if (isRunning) {
+      interval = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
     }
-  }, [countdown, pomodoroTime, currentTimer]);
-
-  useEffect(() => {
     return () => {
-      clearInterval(timerRef.current);
+      clearInterval(interval);
     };
-  }, []);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRunning]);
+
+  const handleChangeTimer = () => {
+    if (currentTimer === "pomodoro") {
+      onChangeShots();
+      if ((shots + 1) % longBreakInterval === 0) {
+        setCurrentTimer("long");
+        setCountdown(longBreakTime * 60);
+      } else {
+        setCurrentTimer("short");
+        setCountdown(shortBreakTime * 60);
+      }
+    }
+    if (currentTimer === "short") {
+      setCurrentTimer("pomodoro");
+      setCountdown(pomodoroTime * 60);
+    }
+    if (currentTimer === "long") {
+      setCurrentTimer("pomodoro");
+      setCountdown(pomodoroTime * 60);
+    }
+  };
 
   return (
     <main className="section">
@@ -119,17 +131,24 @@ const PomodoroTimer = () => {
               <span className="button__text--timer">Long Break</span>
             </button>
           </div>
-          <div className="timer">{secondsToHHMMSS(countdown)}</div>
+          {countdown >= 0 ? (
+            <div className="timer">{secondsToHHMMSS(countdown)}</div>
+          ) : (
+            handleChangeTimer()
+          )}
+
           <div className="row">
             <button
               className="button button--big"
-              onClick={isRunning ? pause : start}
+              onClick={
+                isRunning ? () => setIsRunning(false) : () => setIsRunning(true)
+              }
             >
               {isRunning ? "PAUSE" : "START"}
             </button>
           </div>
         </div>
-        <div className="time-counter">{`#${shots}`}</div>
+        <div onClick={onResetShots} className="time-counter">{`#${shots}`}</div>
         <div className="message">Timer for a break!</div>
       </section>
     </main>

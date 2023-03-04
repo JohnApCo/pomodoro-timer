@@ -8,6 +8,7 @@ const defaultSettings = {
   autoStartBreak: false,
   autoStartPomodoros: false,
   longBreakInterval: "4",
+  shots: "0",
 };
 
 // ----------------------------------------------------------------------
@@ -19,7 +20,8 @@ const initialState = {
   onChangeLongBreak: () => {},
   onToggleAutoStartBreaks: () => {},
   onToggleAutoStartPomodoros: () => {},
-  onChangeLongBreakInterval: () => {},
+  onChangeShots: () => {},
+  onResetShots: () => {},
 };
 
 const SettingsContext = createContext(initialState);
@@ -34,6 +36,7 @@ function SettingsProvider({ children }) {
     autoStartBreak: initialState.autoStartBreak,
     autoStartPomodoros: initialState.autoStartPomodoros,
     longBreakInterval: initialState.longBreakInterval,
+    shots: initialState.shots,
   });
 
   const openSettingsModal = () => {
@@ -92,6 +95,13 @@ function SettingsProvider({ children }) {
     });
   };
 
+  const onChangeShots = () => {
+    setSettings({
+      ...settings,
+      shots: parseInt(settings.shots) + 1,
+    });
+  };
+
   const onResetSetting = () => {
     setSettings({
       themeMode: initialState.themeMode,
@@ -100,6 +110,15 @@ function SettingsProvider({ children }) {
       themeDirection: initialState.themeDirection,
       themeColorPresets: initialState.themeColorPresets,
     });
+  };
+
+  const onResetShots = () => {
+    if (window.confirm("Do you want to refresh the pomodoro count?")) {
+      setSettings({
+        ...settings,
+        shots: initialState.shots,
+      });
+    }
   };
   return (
     <SettingsContext.Provider
@@ -120,8 +139,10 @@ function SettingsProvider({ children }) {
         // Mode
         onChangeMode,
         onToggleMode,
+        onChangeShots,
         // Reset Setting
         onResetSetting,
+        onResetShots,
       }}
     >
       {children}
