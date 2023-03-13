@@ -1,7 +1,7 @@
 import useSettings from "../hooks/useSettings";
 
 const Header = () => {
-  const { openSettingsModal } = useSettings();
+  const { openSettingsModal, onResetSetting } = useSettings();
   return (
     <header className="header">
       <div className="container-sm container--header">
@@ -18,10 +18,15 @@ const Header = () => {
             <i className="fa fa-circle-info icon" />
             <span>Info</span>
           </button>
+          <button
+            id="reset"
+            className="button button--header"
+            onClick={onResetSetting}
+          >
+            <i className="fa fa-refresh icon" />
+            <span>Reset</span>
+          </button>
         </span>
-      </div>
-      <div className="container-sm container--clock-bar">
-        <div className="bar"></div>
       </div>
     </header>
   );

@@ -1,30 +1,34 @@
 import { useEffect, useState } from "react";
 import useSettings from "../hooks/useSettings";
 
-const secondsToHHMMSS = (seconds) => {
-  if (seconds < 3600)
-    return new Date(seconds * 1000).toISOString().substr(14, 5);
+const alarmSound = new Audio(
+  "https://orangefreesounds.com/wp-content/uploads/2022/05/Clock-sound-effect.mp3"
+);
 
-  return new Date(seconds * 1000).toISOString().substr(11, 8);
-};
+const buttonSound = new Audio(
+  "https://www.orangefreesounds.com/wp-content/uploads/2021/04/Button-press-sound-effect.mp3"
+);
 
 const PomodoroTimer = () => {
   const {
-    pomodoroTime,
+    /*     pomodoroTime,
     shortBreakTime,
-    longBreakTime,
+    longBreakTime, */
     longBreakInterval,
     shots,
     onResetShots,
     onChangeShots,
+    timerPresets,
+    setTimer,
+    onChangeTimer,
+    lastCount,
+    onCloseApp,
   } = useSettings();
 
-  const [countdown, setCountdown] = useState(pomodoroTime * 60);
-  /*  const [shots, setShots] = useState(0); */
+  const [countUp, setCountUp] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const [currentTimer, setCurrentTimer] = useState("pomodoro");
 
-  const pomodoroActive = () => {
+  const handleClick = (event) => {
     if (
       isRunning &&
       !window.confirm(
@@ -33,36 +37,8 @@ const PomodoroTimer = () => {
     ) {
       return;
     }
-    setCurrentTimer("pomodoro");
-    setCountdown(pomodoroTime * 60);
-    setIsRunning(false);
-  };
-
-  const shortActive = () => {
-    if (
-      isRunning &&
-      !window.confirm(
-        "The timer is still running, are you sure you want to switch?"
-      )
-    ) {
-      return;
-    }
-    setCurrentTimer("short");
-    setCountdown(shortBreakTime * 60);
-    setIsRunning(false);
-  };
-
-  const longActive = () => {
-    if (
-      isRunning &&
-      !window.confirm(
-        "The timer is still running, are you sure you want to switch?"
-      )
-    ) {
-      return;
-    }
-    setCurrentTimer("long");
-    setCountdown(longBreakTime * 60);
+    onChangeTimer(event.target.value);
+    setCountUp(0);
     setIsRunning(false);
   };
 
@@ -70,86 +46,163 @@ const PomodoroTimer = () => {
     let interval;
     if (isRunning) {
       interval = setInterval(() => {
-        setCountdown((prev) => prev - 1);
+        setCountUp((prev) => prev + 1);
       }, 1000);
     }
+
     return () => {
       clearInterval(interval);
     };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning]);
 
   const handleChangeTimer = () => {
-    if (currentTimer === "pomodoro") {
-      onChangeShots();
+    setIsRunning(false);
+
+    if (timerPresets === "pomodoro") {
       if ((shots + 1) % longBreakInterval === 0) {
-        setCurrentTimer("long");
-        setCountdown(longBreakTime * 60);
+        onChangeShots("long", shots + 1);
       } else {
-        setCurrentTimer("short");
-        setCountdown(shortBreakTime * 60);
+        onChangeShots("short", shots + 1);
       }
     }
-    if (currentTimer === "short") {
-      setCurrentTimer("pomodoro");
-      setCountdown(pomodoroTime * 60);
+    if (timerPresets === "short") {
+      onChangeTimer("pomodoro");
     }
-    if (currentTimer === "long") {
-      setCurrentTimer("pomodoro");
-      setCountdown(pomodoroTime * 60);
+    if (timerPresets === "long") {
+      onChangeTimer("pomodoro");
     }
+    setTimeout(() => {
+      setIsRunning(true);
+    }, 1000);
+  };
+
+  const handleNext = () => {
+    setCountUp(0);
+    handleChangeTimer();
+  };
+
+  useEffect(() => {
+    if (countUp === 0 && isRunning) {
+      alarmSound.play();
+      handleChangeTimer();
+      setTimeout(() => {
+        alarmSound.pause();
+      }, 3000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countUp]);
+
+  const secondsToHHMMSS = (seconds) => {
+    if (seconds === 0) {
+      setCountUp(0);
+    }
+    if (seconds < 3600)
+      return new Date(seconds * 1000).toISOString().substr(14, 5);
+
+    return new Date(seconds * 1000).toISOString().substr(11, 8);
+  };
+
+  useEffect(() => {
+    const handleClose = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
+      if (countUp > 0) {
+        onCloseApp(countUp);
+      } else {
+        onCloseApp(0);
+      }
+    };
+    if (countUp > 0) window.addEventListener("beforeunload", handleClose);
+    else window.removeEventListener("beforeunload", handleClose);
+    return () => {
+      window.removeEventListener("beforeunload", handleClose);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countUp]);
+
+  useEffect(() => {
+    const setNewCountUp = () => {
+      setCountUp(lastCount);
+    };
+    if (lastCount > 0) {
+      setNewCountUp();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleClickTimer = () => {
+    setIsRunning((prev) => !prev);
+    buttonSound.currentTime = 0;
+    buttonSound.play();
   };
 
   return (
     <main className="section">
+      <div className="container-sm container--clock-bar">
+        <div
+          className="bar"
+          style={{ width: `${(100 * countUp) / (setTimer.timeOut * 60)}%` }}
+        ></div>
+      </div>
       <section className="container-sm container--timer">
         <div className="card">
           <div className="button-group">
             <button
-              className={`button ${
-                currentTimer === "pomodoro" && "button--active"
+              className={`button button--timer ${
+                timerPresets === "pomodoro" && "button--active"
               }`}
-              onClick={pomodoroActive}
+              onClick={handleClick}
+              value="pomodoro"
             >
-              <span className="button__text--timer">Pomodoro</span>
+              Pomodoro
             </button>
             <button
-              className={`button ${
-                currentTimer === "short" && "button--active"
+              className={`button button--timer ${
+                timerPresets === "short" && "button--active"
               }`}
-              onClick={shortActive}
+              onClick={handleClick}
+              value="short"
             >
-              <span className="button__text--timer">Short Break</span>
+              Short Break
             </button>
             <button
-              className={`button ${
-                currentTimer === "long" && "button--active"
+              className={`button button--timer ${
+                timerPresets === "long" && "button--active"
               }`}
-              onClick={longActive}
+              onClick={handleClick}
+              value="long"
             >
-              <span className="button__text--timer">Long Break</span>
+              Long Break
             </button>
           </div>
-          {countdown >= 0 ? (
-            <div className="timer">{secondsToHHMMSS(countdown)}</div>
-          ) : (
-            handleChangeTimer()
-          )}
-
-          <div className="row">
+          <div id="time-left" className="timer">
+            {setTimer.timeOut * 60 - countUp}
+          </div>
+          <div className="row--buttons">
             <button
-              className="button button--big"
-              onClick={
-                isRunning ? () => setIsRunning(false) : () => setIsRunning(true)
-              }
+              id="start_stop"
+              className={`button button--big ${
+                isRunning && "button--big--active"
+              }`}
+              style={{ color: setTimer.color }}
+              onClick={handleClickTimer}
             >
               {isRunning ? "PAUSE" : "START"}
             </button>
+            {isRunning && (
+              <div className="next">
+                <button className="next__button" onClick={handleNext}>
+                  <i className="fa fa-forward-step"></i>
+                </button>
+              </div>
+            )}
           </div>
         </div>
         <div onClick={onResetShots} className="time-counter">{`#${shots}`}</div>
-        <div className="message">Timer for a break!</div>
+        <div id="timer-label" className="message">
+          {setTimer.message}
+        </div>
       </section>
     </main>
   );

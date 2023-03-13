@@ -1,4 +1,5 @@
 import useSettings from "../hooks/useSettings";
+import InputNumber from "./InputNumber";
 import Modal from "./Modal";
 import { Toggle } from "./Toggle";
 
@@ -25,9 +26,13 @@ const SettingsModal = (props) => {
           <i className="fa fa-clock icon"></i>
           <h5>Time (minutes)</h5>
         </div>
-        <div className="row row--settings">
+        {/*         <div className="row row--settings">
           <div className="timer-item">
-            <label className="timer-item__label" htmlFor="pomodoro">
+            <label
+              id="session-label"
+              className="timer-item__label"
+              htmlFor="pomodoro"
+            >
               Pomodoro
             </label>
             <input
@@ -42,7 +47,11 @@ const SettingsModal = (props) => {
             />
           </div>
           <div className="timer-item">
-            <label className="timer-item__label" htmlFor="short-break">
+            <label
+              id="break-label"
+              className="timer-item__label"
+              htmlFor="short-break"
+            >
               Short Break
             </label>
             <input
@@ -71,6 +80,32 @@ const SettingsModal = (props) => {
               onChange={onChangeLongBreakTime}
             />
           </div>
+        </div> */}
+        <div className="row row--settings">
+          <InputNumber
+            label="Pomodoro"
+            id="session"
+            min={0}
+            step={1}
+            value={pomodoroTime}
+            onChange={onChangePomodoroTime}
+          />
+          <InputNumber
+            label="Short Break"
+            id="break"
+            min={0}
+            step={1}
+            value={shortBreakTime}
+            onChange={onChangeShortBreakTime}
+          />
+          <InputNumber
+            label="Long Break"
+            id="long-break"
+            min={0}
+            step={1}
+            value={longBreakTime}
+            onChange={onChangeLongBreakTime}
+          />
         </div>
         <div className="row row--settings">
           <span className="setting__label"> Auto Start Breaks</span>

@@ -7,13 +7,14 @@ import useSettings from "./hooks/useSettings";
 // ----------------------------------------------------------------------
 
 function App() {
-  const { isSettingsOpen } = useSettings();
+  const { isSettingsOpen, setTimer } = useSettings();
+
   return (
-    <>
+    <div className="body" style={{ backgroundColor: setTimer.color }}>
       <Header />
       <PomodoroTimer />
       <SettingsModal show={isSettingsOpen} />
-    </>
+    </div>
   );
 }
 

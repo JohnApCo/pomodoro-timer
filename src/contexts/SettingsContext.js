@@ -8,7 +8,9 @@ const defaultSettings = {
   autoStartBreak: false,
   autoStartPomodoros: false,
   longBreakInterval: "4",
-  shots: "0",
+  shots: 0,
+  timerPresets: "pomodoro",
+  lastCount: 0,
 };
 
 // ----------------------------------------------------------------------
@@ -22,6 +24,13 @@ const initialState = {
   onToggleAutoStartPomodoros: () => {},
   onChangeShots: () => {},
   onResetShots: () => {},
+  onChangeTimer: () => {},
+  setTimer: {
+    name: "pomodoro",
+    time: "00",
+    color: "#2065D1",
+  },
+  onCloseApp: () => {},
 };
 
 const SettingsContext = createContext(initialState);
@@ -37,6 +46,8 @@ function SettingsProvider({ children }) {
     autoStartPomodoros: initialState.autoStartPomodoros,
     longBreakInterval: initialState.longBreakInterval,
     shots: initialState.shots,
+    timerPresets: initialState.timerPresets,
+    lastCount: initialState.lastCount,
   });
 
   const openSettingsModal = () => {
@@ -53,24 +64,24 @@ function SettingsProvider({ children }) {
     setIsInfoOpen(false);
   };
 
-  const onChangePomodoroTime = (event) => {
+  const onChangePomodoroTime = (newValue) => {
     setSettings({
       ...settings,
-      pomodoroTime: event.target.value,
+      pomodoroTime: newValue,
     });
   };
 
-  const onChangeShortBreakTime = (event) => {
+  const onChangeShortBreakTime = (newValue) => {
     setSettings({
       ...settings,
-      shortBreakTime: event.target.value,
+      shortBreakTime: newValue,
     });
   };
 
-  const onChangeLongBreakTime = (event) => {
+  const onChangeLongBreakTime = (newValue) => {
     setSettings({
       ...settings,
-      longBreakTime: event.target.value,
+      longBreakTime: newValue,
     });
   };
 
@@ -95,20 +106,25 @@ function SettingsProvider({ children }) {
     });
   };
 
-  const onChangeShots = () => {
+  const onChangeShots = (newTimer, newShots) => {
     setSettings({
       ...settings,
-      shots: parseInt(settings.shots) + 1,
+      timerPresets: newTimer,
+      shots: newShots,
     });
   };
 
   const onResetSetting = () => {
     setSettings({
-      themeMode: initialState.themeMode,
-      themeLayout: initialState.themeLayout,
-      themeStretch: initialState.themeStretch,
-      themeDirection: initialState.themeDirection,
-      themeColorPresets: initialState.themeColorPresets,
+      pomodoroTime: initialState.pomodoroTime,
+      shortBreakTime: initialState.shortBreakTime,
+      longBreakTime: initialState.longBreakTime,
+      autoStartBreak: initialState.autoStartBreak,
+      autoStartPomodoros: initialState.autoStartPomodoros,
+      longBreakInterval: initialState.longBreakInterval,
+      shots: initialState.shots,
+      timerPresets: initialState.timerPresets,
+      lastCount: initialState.lastCount,
     });
   };
 
@@ -120,6 +136,54 @@ function SettingsProvider({ children }) {
       });
     }
   };
+
+  const onChangeTimer = (newValue) => {
+    setSettings({
+      ...settings,
+      timerPresets: newValue,
+    });
+  };
+
+  const timerPresets = [
+    {
+      name: "pomodoro",
+      timeOut: settings.pomodoroTime,
+      color: "rgb(57 112 151)",
+      message: "Time to focus!",
+    },
+    {
+      name: "short",
+      timeOut: settings.shortBreakTime,
+      color: "rgb(56 133 138)",
+      message: "Time for a break!",
+    },
+    {
+      name: "long",
+      timeOut: settings.longBreakTime,
+      color: "rgb(125 83 162)",
+      message: "Time for a break!",
+    },
+  ];
+
+  const pomodoroPreset = timerPresets[0];
+  const shortPreset = timerPresets[1];
+  const longPreset = timerPresets[2];
+
+  function getColorPresets(presetsKey) {
+    return {
+      pomodoro: pomodoroPreset,
+      short: shortPreset,
+      long: longPreset,
+    }[presetsKey];
+  }
+
+  const onCloseApp = (value) => {
+    setSettings({
+      ...settings,
+      lastCount: value,
+    });
+  };
+
   return (
     <SettingsContext.Provider
       value={{
@@ -143,6 +207,9 @@ function SettingsProvider({ children }) {
         // Reset Setting
         onResetSetting,
         onResetShots,
+        setTimer: getColorPresets(settings.timerPresets),
+        onChangeTimer,
+        onCloseApp,
       }}
     >
       {children}
