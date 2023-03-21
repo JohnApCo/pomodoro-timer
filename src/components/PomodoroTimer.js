@@ -1,9 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useSettings from "../hooks/useSettings";
-
-const alarmSound = new Audio(
-  "https://orangefreesounds.com/wp-content/uploads/2022/05/Clock-sound-effect.mp3"
-);
 
 const buttonSound = new Audio(
   "https://www.orangefreesounds.com/wp-content/uploads/2021/04/Button-press-sound-effect.mp3"
@@ -11,9 +7,6 @@ const buttonSound = new Audio(
 
 const PomodoroTimer = () => {
   const {
-    /*     pomodoroTime,
-    shortBreakTime,
-    longBreakTime, */
     longBreakInterval,
     shots,
     onResetShots,
@@ -23,10 +16,18 @@ const PomodoroTimer = () => {
     onChangeTimer,
     lastCount,
     onCloseApp,
+    onResetSetting,
   } = useSettings();
 
-  const [countUp, setCountUp] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
+  /*   const [countUp, setCountUp] = useState(0); */
+  /* const [isRunning, setIsRunning] = useState(false); */
+  const {
+    count: [countUp, setCountUp],
+    isRunning: [isRunning, setIsRunning],
+  } = useSettings();
+
+  const audioRef = useRef(null);
+  const [clock, setClock] = useState("00:00");
 
   const handleClick = (event) => {
     if (
@@ -57,7 +58,7 @@ const PomodoroTimer = () => {
   }, [isRunning]);
 
   const handleChangeTimer = () => {
-    setIsRunning(false);
+    /* setIsRunning(false); */
 
     if (timerPresets === "pomodoro") {
       if ((shots + 1) % longBreakInterval === 0) {
@@ -72,9 +73,9 @@ const PomodoroTimer = () => {
     if (timerPresets === "long") {
       onChangeTimer("pomodoro");
     }
-    setTimeout(() => {
+    /* setTimeout(() => {
       setIsRunning(true);
-    }, 1000);
+    }, 1000); */
   };
 
   const handleNext = () => {
@@ -82,7 +83,12 @@ const PomodoroTimer = () => {
     handleChangeTimer();
   };
 
-  useEffect(() => {
+  const handleReset = () => {
+    audioRef.current.currentTime = 0;
+    audioRef.current.pause();
+    onResetSetting();
+  };
+  /*   useEffect(() => {
     if (countUp === 0 && isRunning) {
       alarmSound.play();
       handleChangeTimer();
@@ -91,9 +97,9 @@ const PomodoroTimer = () => {
       }, 3000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [countUp]);
+  }, [countUp]); */
 
-  const secondsToHHMMSS = (seconds) => {
+  /*   const secondsToHHMMSS = (seconds) => {
     if (seconds === 0) {
       setCountUp(0);
     }
@@ -101,7 +107,7 @@ const PomodoroTimer = () => {
       return new Date(seconds * 1000).toISOString().substr(14, 5);
 
     return new Date(seconds * 1000).toISOString().substr(11, 8);
-  };
+  }; */
 
   useEffect(() => {
     const handleClose = (event) => {
@@ -136,6 +142,52 @@ const PomodoroTimer = () => {
     buttonSound.currentTime = 0;
     buttonSound.play();
   };
+
+  /*   useEffect(() => {
+    console.log("isOverflow =>", isOverflow);
+    if (!isOverflow) {
+      return;
+    }
+    setCountUp(0);
+
+    return () => {
+      setIsOverflow(false);
+    };
+  }, [isOverflow]); */
+
+  useEffect(() => {
+    if (countUp === 0 && isRunning) {
+      handleChangeTimer();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countUp]);
+
+  const getTime = useCallback(() => {
+    if (setTimer.timeOut * 60 < countUp && isRunning) {
+      console.log("count => ", countUp);
+      setCountUp(0);
+      /* alarmSound.play(); */
+      audioRef.current.play();
+      /* handleChangeTimer(); */
+      setTimeout(() => {
+        /* alarmSound.pause(); */
+        audioRef.current.pause();
+      }, 3000);
+      setClock(`00:00`);
+      return;
+    }
+    let minutes, seconds;
+    minutes = Math.floor((setTimer.timeOut * 60 - countUp) / 60);
+    seconds = (setTimer.timeOut * 60 - countUp) % 60;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    setClock(`${minutes}:${seconds}`);
+    return;
+  }, [countUp, isRunning, setTimer.timeOut]);
+
+  useEffect(() => {
+    getTime();
+  }, [getTime]);
 
   return (
     <main className="section">
@@ -177,9 +229,18 @@ const PomodoroTimer = () => {
             </button>
           </div>
           <div id="time-left" className="timer">
-            {setTimer.timeOut * 60 - countUp}
+            {clock}
           </div>
           <div className="row--buttons">
+            <div className="timer_button">
+              <button
+                id="reset"
+                className="timer_button__button"
+                onClick={handleReset}
+              >
+                <i className="fa fa-refresh"></i>
+              </button>
+            </div>
             <button
               id="start_stop"
               className={`button button--big ${
@@ -190,19 +251,24 @@ const PomodoroTimer = () => {
             >
               {isRunning ? "PAUSE" : "START"}
             </button>
-            {isRunning && (
-              <div className="next">
-                <button className="next__button" onClick={handleNext}>
-                  <i className="fa fa-forward-step"></i>
-                </button>
-              </div>
-            )}
+            {/* {isRunning && ( */}
+            <div className="timer_button">
+              <button className="timer_button__button" onClick={handleNext}>
+                <i className="fa fa-forward-step"></i>
+              </button>
+            </div>
+            {/* )} */}
           </div>
         </div>
         <div onClick={onResetShots} className="time-counter">{`#${shots}`}</div>
         <div id="timer-label" className="message">
           {setTimer.message}
         </div>
+        <audio
+          id="beep"
+          ref={audioRef}
+          src="https://orangefreesounds.com/wp-content/uploads/2022/05/Clock-sound-effect.mp3"
+        ></audio>
       </section>
     </main>
   );

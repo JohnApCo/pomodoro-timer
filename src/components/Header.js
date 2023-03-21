@@ -18,11 +18,7 @@ const Header = () => {
             <i className="fa fa-circle-info icon" />
             <span>Info</span>
           </button>
-          <button
-            id="reset"
-            className="button button--header"
-            onClick={onResetSetting}
-          >
+          <button className="button button--header" onClick={onResetSetting}>
             <i className="fa fa-refresh icon" />
             <span>Reset</span>
           </button>

@@ -374,18 +374,22 @@ h3,
   width: 100%;
 }
 
-.next {
+.timer_button {
   position: absolute;
-  right: 0;
   top: 1rem;
   width: calc((100% - 12rem) / 2 + 5%);
 }
-.next__button {
+
+.timer_button:last-child {
+  right: 0;
+}
+
+.timer_button__button {
   background: none;
   border: none;
   color: #fff;
   cursor: pointer;
-  width: 2rem;
+  /* width: 2rem; */
   font-size: 2rem;
   height: auto;
 }

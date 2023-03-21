@@ -36,6 +36,8 @@ const initialState = {
 const SettingsContext = createContext(initialState);
 
 function SettingsProvider({ children }) {
+  const [countUp, setCountUp] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
   const [isSettingsOpen, setIsSettingOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [settings, setSettings] = useLocalStorage("settings", {
@@ -126,6 +128,8 @@ function SettingsProvider({ children }) {
       timerPresets: initialState.timerPresets,
       lastCount: initialState.lastCount,
     });
+    setCountUp(0);
+    setIsRunning(false);
   };
 
   const onResetShots = () => {
@@ -210,6 +214,8 @@ function SettingsProvider({ children }) {
         setTimer: getColorPresets(settings.timerPresets),
         onChangeTimer,
         onCloseApp,
+        count: [countUp, setCountUp],
+        isRunning: [isRunning, setIsRunning],
       }}
     >
       {children}
