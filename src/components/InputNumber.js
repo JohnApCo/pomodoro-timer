@@ -1,20 +1,17 @@
-import PropTypes from "prop-types";
-
-const InputNumber = ({ id, label, min, max, step, value, onChange }) => {
-  /* const [val, setVal] = useState(value); */
+const InputNumber = ({ id, name, label, min, max, step, value, onChange }) => {
   let NumberValue = Number(value);
   const decrement = () => {
-    if (NumberValue <= 1) {
+    if (NumberValue <= min) {
       return;
     }
-    onChange(NumberValue - 1);
+    onChange(name, NumberValue - step);
   };
 
   const increment = () => {
-    if (NumberValue >= 60) {
+    if (NumberValue >= max) {
       return;
     }
-    onChange(NumberValue + 1);
+    onChange(name, NumberValue + step);
   };
   return (
     <div id={`${id}-label`} style={{ flexBasis: "100%", textAlign: "center" }}>
@@ -42,8 +39,4 @@ const InputNumber = ({ id, label, min, max, step, value, onChange }) => {
   );
 };
 
-InputNumber.propTypes = {
-  /*   value: PropTypes.number.isRequired,
-  setValue: PropTypes.func.isRequired, */
-};
 export default InputNumber;

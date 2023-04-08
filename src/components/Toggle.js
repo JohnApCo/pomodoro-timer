@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export const Toggle = ({ id, toggled, clickHandler }) => {
-  const [isToggled, toggle] = useState(toggled);
+export const Toggle = ({ name, id, toggled, clickHandler }) => {
+  const [isToggled, setIsToggle] = useState(toggled);
 
   const callback = () => {
-    toggle(!isToggled);
-    clickHandler(!isToggled);
+    setIsToggle(!isToggled);
   };
+
+  useEffect(() => {
+    clickHandler(name, isToggled);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isToggled]);
 
   return (
     <>

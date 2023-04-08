@@ -2,14 +2,15 @@
 /* @link https://utopia.fyi/type/calculator?c=320,17,1.125,1920,20,1.333,6,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l */
 
 :root {
-  --step--2: clamp(0.78rem, calc(0.79rem + -0.01vw), 0.79rem);
-  --step--1: clamp(0.89rem, calc(0.88rem + 0.06vw), 0.94rem);
-  --step-0: clamp(1rem, calc(0.97rem + 0.16vw), 1.13rem);
-  --step-1: clamp(1.13rem, calc(1.07rem + 0.29vw), 1.35rem);
-  --step-2: clamp(1.27rem, calc(1.18rem + 0.45vw), 1.62rem);
-  --step-3: clamp(1.42rem, calc(1.29rem + 0.66vw), 1.94rem);
-  --step-4: clamp(1.6rem, calc(1.42rem + 0.93vw), 2.33rem);
-  --step-5: clamp(1.8rem, calc(1.55rem + 1.27vw), 2.8rem);
+  --step--2: clamp(0.7rem, calc(0.87rem + -0.14vw), 0.84rem);
+  --step--1: clamp(0.94rem, calc(0.95rem + -0.01vw), 0.94rem);
+  --step-0: clamp(1.06rem, calc(1.03rem + 0.19vw), 1.25rem);
+  --step-1: clamp(1.2rem, calc(1.1rem + 0.47vw), 1.67rem);
+  --step-2: clamp(1.35rem, calc(1.17rem + 0.88vw), 2.22rem);
+  --step-3: clamp(1.51rem, calc(1.22rem + 1.45vw), 2.96rem);
+  --step-4: clamp(1.7rem, calc(1.25rem + 2.25vw), 3.95rem);
+  --step-5: clamp(1.91rem, calc(1.25rem + 3.35vw), 5.26rem);
+  --step-6: clamp(2.15rem, calc(1.18rem + 4.86vw), 7.01rem);
 }
 
 /* ******************** Custom Properties ******************** */
@@ -169,7 +170,7 @@ h3,
 }
 
 .timer {
-  font-size: 8rem;
+  font-size: calc(1.5 * var(--step-6));
   font-weight: 700;
 }
 
@@ -239,8 +240,8 @@ h3,
   background-color: var(--text-color);
   color: var(--bg-color);
   font-weight: 700;
-  padding: 1rem;
-  width: 12rem;
+  padding: 1rem 2rem;
+  /* width: 12rem; */
   box-shadow: rgb(235 235 235) 0px 0.4rem 0px;
 }
 
@@ -280,7 +281,7 @@ h3,
   background-color: white;
   color: var(--text-color-secondary);
   border-radius: 0.5rem;
-  padding: 1rem;
+  padding: 0;
 }
 
 .button--secondary {
@@ -288,8 +289,21 @@ h3,
   color: white;
 }
 
-.modal__footer {
-  text-align: center;
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid rgb(238, 238, 238);
+}
+
+.modal__body {
+  padding: 1rem 1rem;
+}
+
+.modal__close {
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 
 .timer-item {
@@ -301,6 +315,7 @@ h3,
   font-weight: 600;
   font-size: 0.9rem;
 }
+
 .setting__label {
   font-weight: 600;
 }
@@ -324,6 +339,9 @@ h3,
   width: 70px;
 }
 
+.settings__submit {
+  text-align: center;
+}
 /***************** Toggle ****************/
 
 .toggle__checkbox {

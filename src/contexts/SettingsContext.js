@@ -20,6 +20,7 @@ const initialState = {
   onChangePomodoro: () => {},
   onChangeShortBreak: () => {},
   onChangeLongBreak: () => {},
+  onChangeSetting: () => {},
   onToggleAutoStartBreaks: () => {},
   onToggleAutoStartPomodoros: () => {},
   onChangeShots: () => {},
@@ -91,6 +92,13 @@ function SettingsProvider({ children }) {
     setSettings({
       ...settings,
       longBreakInterval: event.target.value,
+    });
+  };
+
+  const onChangeSetting = (name, newValue) => {
+    setSettings({
+      ...settings,
+      [name]: newValue,
     });
   };
 
@@ -204,6 +212,7 @@ function SettingsProvider({ children }) {
         onChangeShortBreakTime,
         onChangeLongBreakTime,
         onChangeLongBreakInterval,
+        onChangeSetting,
         // Mode
         onChangeMode,
         onToggleMode,

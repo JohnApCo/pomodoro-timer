@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import useSettings from "../hooks/useSettings";
 import InputNumber from "./InputNumber";
 import Modal from "./Modal";
@@ -8,17 +9,15 @@ const SettingsModal = (props) => {
     isSettingsOpen,
     closeSettingsModal,
     pomodoroTime,
-    onChangePomodoroTime,
     shortBreakTime,
-    onChangeShortBreakTime,
     longBreakTime,
-    onChangeLongBreakTime,
     longBreakInterval,
+    autoStartBreak,
+    autoStartPomodoros,
     onChangeLongBreakInterval,
+    onChangeSetting,
   } = useSettings();
-  const logState = (state) => {
-    console.log("Toggled:", state);
-  };
+
   return (
     <Modal show={isSettingsOpen} title="Settings" onClose={closeSettingsModal}>
       <section className="setting">
@@ -26,94 +25,55 @@ const SettingsModal = (props) => {
           <i className="fa fa-clock icon"></i>
           <h5>Time (minutes)</h5>
         </div>
-        {/*         <div className="row row--settings">
-          <div className="timer-item">
-            <label
-              id="session-label"
-              className="timer-item__label"
-              htmlFor="pomodoro"
-            >
-              Pomodoro
-            </label>
-            <input
-              className="setting__input"
-              type="number"
-              name="pomodoro"
-              id="pomodoro"
-              min={0}
-              step={1}
-              value={pomodoroTime}
-              onChange={onChangePomodoroTime}
-            />
-          </div>
-          <div className="timer-item">
-            <label
-              id="break-label"
-              className="timer-item__label"
-              htmlFor="short-break"
-            >
-              Short Break
-            </label>
-            <input
-              className="setting__input"
-              type="number"
-              name="short-break"
-              id="short-break"
-              min={0}
-              step={1}
-              value={shortBreakTime}
-              onChange={onChangeShortBreakTime}
-            />
-          </div>
-          <div className="timer-item">
-            <label className="timer-item__label" htmlFor="long-break">
-              Long Break
-            </label>
-            <input
-              className="setting__input"
-              type="number"
-              name="long-break"
-              id="long-break"
-              min={0}
-              step={1}
-              value={longBreakTime}
-              onChange={onChangeLongBreakTime}
-            />
-          </div>
-        </div> */}
         <div className="row row--settings">
           <InputNumber
+            name="pomodoroTime"
             label="Pomodoro"
             id="session"
-            min={0}
+            min={1}
+            max={60}
             step={1}
             value={pomodoroTime}
-            onChange={onChangePomodoroTime}
+            onChange={onChangeSetting}
           />
           <InputNumber
+            name="shortBreakTime"
             label="Short Break"
             id="break"
-            min={0}
+            min={1}
+            max={60}
             step={1}
             value={shortBreakTime}
-            onChange={onChangeShortBreakTime}
+            onChange={onChangeSetting}
           />
           <InputNumber
+            name="longBreakTime"
             label="Long Break"
             id="long-break"
-            min={0}
+            min={1}
+            max={60}
             step={1}
             value={longBreakTime}
-            onChange={onChangeLongBreakTime}
+            onChange={onChangeSetting}
           />
         </div>
         <div className="row row--settings">
           <span className="setting__label"> Auto Start Breaks</span>
-          <Toggle id="auto-breaks" toggled={true} clickHandler={logState} />
+          <Toggle
+            name="autoStartBreak"
+            id="auto-breaks"
+            toggled={autoStartBreak}
+            clickHandler={onChangeSetting}
+          />
         </div>
         <div className="row row--settings">
           <span className="setting__label"> Auto Start Pomodoros</span>
-          <Toggle id="auto-pomodoros" toggled={true} clickHandler={logState} />
+          <Toggle
+            name="autoStartPomodoros"
+            id="auto-pomodoros"
+            toggled={autoStartPomodoros}
+            clickHandler={onChangeSetting}
+          />
         </div>
         <div className="row row--settings">
           <span className="setting__label"> Long Break Interval</span>
@@ -129,6 +89,14 @@ const SettingsModal = (props) => {
           />
         </div>
       </section>
+      <div className="settings__submit">
+        <button
+          className="button button--secondary"
+          onClick={closeSettingsModal}
+        >
+          Ok
+        </button>
+      </div>
     </Modal>
   );
 };

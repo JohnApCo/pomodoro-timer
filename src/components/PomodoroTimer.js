@@ -58,8 +58,6 @@ const PomodoroTimer = () => {
   }, [isRunning]);
 
   const handleChangeTimer = () => {
-    /* setIsRunning(false); */
-
     if (timerPresets === "pomodoro") {
       if ((shots + 1) % longBreakInterval === 0) {
         onChangeShots("long", shots + 1);
@@ -73,9 +71,6 @@ const PomodoroTimer = () => {
     if (timerPresets === "long") {
       onChangeTimer("pomodoro");
     }
-    /* setTimeout(() => {
-      setIsRunning(true);
-    }, 1000); */
   };
 
   const handleNext = () => {
@@ -88,26 +83,6 @@ const PomodoroTimer = () => {
     audioRef.current.pause();
     onResetSetting();
   };
-  /*   useEffect(() => {
-    if (countUp === 0 && isRunning) {
-      alarmSound.play();
-      handleChangeTimer();
-      setTimeout(() => {
-        alarmSound.pause();
-      }, 3000);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [countUp]); */
-
-  /*   const secondsToHHMMSS = (seconds) => {
-    if (seconds === 0) {
-      setCountUp(0);
-    }
-    if (seconds < 3600)
-      return new Date(seconds * 1000).toISOString().substr(14, 5);
-
-    return new Date(seconds * 1000).toISOString().substr(11, 8);
-  }; */
 
   useEffect(() => {
     const handleClose = (event) => {
@@ -143,18 +118,6 @@ const PomodoroTimer = () => {
     buttonSound.play();
   };
 
-  /*   useEffect(() => {
-    console.log("isOverflow =>", isOverflow);
-    if (!isOverflow) {
-      return;
-    }
-    setCountUp(0);
-
-    return () => {
-      setIsOverflow(false);
-    };
-  }, [isOverflow]); */
-
   useEffect(() => {
     if (countUp === 0 && isRunning) {
       handleChangeTimer();
@@ -183,6 +146,7 @@ const PomodoroTimer = () => {
     seconds = seconds < 10 ? "0" + seconds : seconds;
     setClock(`${minutes}:${seconds}`);
     return;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countUp, isRunning, setTimer.timeOut]);
 
   useEffect(() => {

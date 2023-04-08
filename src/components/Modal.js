@@ -26,13 +26,9 @@ const Modal = (props) => {
       >
         <div className="modal__header">
           <h4 className="modal__title">{props.title}</h4>
+          <i className="fa fa-xmark modal__close" onClick={props.onClose}></i>
         </div>
         <div className="modal__body">{props.children}</div>
-        <div className="modal__footer">
-          <button className="button button--secondary" onClick={props.onClose}>
-            Ok
-          </button>
-        </div>
       </div>
     </div>
   );
